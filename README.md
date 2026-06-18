@@ -45,24 +45,7 @@ The pipeline supports **10 regions** and runs on a configurable schedule via AWS
 
 The pipeline follows the **Medallion Architecture** pattern with three data layers:
 
-```text
-Data Sources          Bronze              Silver            Quality Gate          Gold              Analytics
-┌──────────┐     ┌──────────────┐    ┌──────────────┐    ┌────────────┐    ┌──────────────┐    ┌──────────┐
-│ YouTube  │     │              │    │              │    │            │    │  trending_   │    │          │
-│ API v3   │────>│  Raw JSON    │───>│  Cleansed    │───>│  DQ Lambda │───>│  analytics   │───>│  Athena  │
-│          │     │  (S3)        │    │  Parquet     │    │  Validates │    │              │    │          │
-├──────────┤     │              │    │  (S3)        │    │  row count │    │  channel_    │    ├──────────┤
-│ Kaggle   │     │  Raw CSV     │    │              │    │  nulls     │    │  analytics   │    │  Quick-  │
-│ Dataset  │────>│  (S3)        │    │  Reference   │    │  schema    │    │              │    │  Sight   │
-│          │     │              │    │  Parquet     │    │  freshness │    │  category_   │    │          │
-└──────────┘     └──────────────┘    └──────────────┘    └────────────┘    │  analytics   │    └──────────┘
-                                                              │           └──────────────┘
-                                                         fail │
-                                                              ▼
-                                                        ┌────────────┐
-                                                        │  SNS Alert │
-                                                        └────────────┘
-```
+![image alt](https://github.com/Nikhilm194/Youtube-etl-AWS/blob/master/YouTube%20Trending%20Data%20Pipeline.png?raw=true)
 
 **Orchestration** is handled by AWS Step Functions, which coordinates the full pipeline with retry logic, parallel execution, and failure notifications.
 
